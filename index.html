@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100吋電視牆數位看板</title>
+    <!-- 引入 Tailwind CSS 用於快速排版 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 隱藏捲軸，確保乾淨的全螢幕體驗 */
+        body {
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        /* 跑馬燈動畫設定：垂直輪播寫法 */
+        .marquee-v-container {
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .marquee-v-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            /* 10秒輪播一圈，可根據需求調整秒數 */
+            animation: marquee-vertical-step 10s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .marquee-item {
+            height: 100px; /* 與外層容器同高，確保垂直置中 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @keyframes marquee-vertical-step {
+            0%, 40% { transform: translateY(0); }         /* 顯示第一則，停留 */
+            50%, 90% { transform: translateY(-100px); }   /* 滑動到第二則，停留 */
+            100% { transform: translateY(-200px); }       /* 滑動到第三則(第一則替身)達成無縫銜接 */
+        }
+
+        /* 時鐘字體發光效果 */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen text-white font-sans flex flex-col">
+
+    <!-- 上方主要內容區 (佔用剩餘空間) -->
+    <div class="flex-1 flex flex-row p-6 gap-6 h-[calc(100vh-100px)]">
+        
+        <!-- 左/中側：動態影片/圖片輪播區 (佔 75%) -->
+        <div id="media-container" class="w-3/4 rounded-[2rem] overflow-hidden bg-black shadow-2xl relative border border-gray-800 flex justify-center items-center">
+            <!-- 輪播內容會由下方的 JS 自動生成並替換 -->
+            <div class="text-gray-500 text-2xl">載入媒體中...</div>
+        </div>
+
+        <!-- 右側：日期、時間與天氣資訊區 (佔 25%) -->
+        <div class="w-1/4 flex flex-col gap-6">
+            
+            <!-- 時間與日期區塊 -->
+            <div class="bg-gray-800/80 backdrop-blur-md rounded-[2rem] p-8 shadow-xl flex flex-col items-center justify-center border border-gray-700">
+                <div id="time" class="text-8xl md:text-[7vw] font-bold tracking-tight mb-4 text-glow">--:--</div>
+                <div id="date" class="text-4xl text-gray-300 font-medium tracking-wide">----/--/--</div>
+                <div id="weekday" class="text-3xl text-gray-400 mt-3">星期-</div>
+            </div>
+
+            <!-- 天氣資訊區塊 -->
+            <div class="bg-gray-800/80 backdrop-blur-md rounded-[2rem] p-8 shadow-xl flex-1 flex flex-col items-center justify-center border border-gray-700 relative overflow-hidden">
+                <!-- 裝飾性背景光暈 -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+                
+                <!-- 地區名稱獨立於最上方 (縮小字體為 2xl~3xl，減少底部間距) -->
+                <div class="text-2xl xl:text-3xl text-white font-bold tracking-wide whitespace-nowrap z-10 mb-6">新北市 三峽區</div>
+
+                <!-- 狀態圖示 (加入 flex-shrink-0 防止被版面擠壓變形) -->
+                <div id="weather-icon" class="w-24 h-24 flex-shrink-0 text-yellow-400 transition-all duration-500 z-10">
+                    <!-- 預設載入中圖示 -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </div>
+
+                <!-- 溫度區塊 (改用 7xl~8xl 取代原本過大的 6vw，並縮小 °C 單位) -->
+                <div class="flex items-baseline gap-2 z-10 mt-2">
+                    <span id="temperature" class="text-7xl lg:text-8xl font-bold text-glow">--</span>
+                    <span class="text-4xl text-gray-300">°C</span>
+                </div>
+                
+                <!-- 說明文字 (縮小至 2xl) -->
+                <div id="weather-desc" class="text-2xl text-gray-300 mt-4 font-medium z-10">天氣資料讀取中...</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 最下方：文字跑馬燈區塊 (固定高度) -->
+    <div class="h-[100px] w-full bg-gradient-to-r from-blue-950 via-gray-900 to-blue-950 border-t-2 border-gray-800 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
+        <div class="marquee-v-container">
+            <div class="marquee-v-content text-5xl font-medium tracking-wider text-blue-100">
+                <div class="marquee-item">✨ 新北市立三峽國民中學 歡迎您</div>
+                <div class="marquee-item">🎬 歡迎收看畢業影展短片</div>
+                <!-- 替身：用於無縫循環播放 (與第一段文字相同) -->
+                <div class="marquee-item" aria-hidden="true">✨ 新北市立三峽國民中學 歡迎您</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 時鐘與日期更新邏輯 ---
+        function updateClock() {
+            const now = new Date();
+            
+            // 格式化時間 (HH:MM)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').innerText = `${hours}:${minutes}`;
+            
+            // 格式化日期 (YYYY/MM/DD)
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('date').innerText = `${year}/${month}/${day}`;
+            
+            // 格式化星期
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            document.getElementById('weekday').innerText = weekdays[now.getDay()];
+        }
+
+        // --- 2. 天氣 API 讀取邏輯 ---
+        // 使用免 Key 的 Open-Meteo API (座標：新北三峽)
+        async function fetchWeather() {
+            try {
+                // 經緯度設定為新北市三峽區 (約 24.9344, 121.3693)
+                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=24.9344&longitude=121.3693&current_weather=true&timezone=Asia%2FTaipei');
+                const data = await response.json();
+                const weather = data.current_weather;
+                
+                document.getElementById('temperature').innerText = Math.round(weather.temperature);
+                
+                // 根據 WMO 天氣代碼更新圖示與文字
+                updateWeatherUI(weather.weathercode);
+            } catch (error) {
+                console.error("無法取得天氣資料:", error);
+                document.getElementById('weather-desc').innerText = "暫無天氣資料";
+            }
+        }
+
+        // SVG 圖示庫
+        const icons = {
+            sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-yellow-400"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+            cloud: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-gray-300"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>`,
+            rain: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-blue-400"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M16 19v2"/><path d="M8 19v2"/><path d="M12 19v2"/></svg>`,
+            thunder: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-yellow-500"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`
+        };
+
+        function updateWeatherUI(code) {
+            const descEl = document.getElementById('weather-desc');
+            const iconEl = document.getElementById('weather-icon');
+            
+            // 簡易的 WMO 天氣代碼對應
+            if (code === 0 || code === 1) {
+                descEl.innerText = "晴朗";
+                iconEl.innerHTML = icons.sun;
+            } else if (code === 2 || code === 3) {
+                descEl.innerText = "多雲";
+                iconEl.innerHTML = icons.cloud;
+            } else if (code >= 45 && code <= 48) {
+                descEl.innerText = "有霧";
+                iconEl.innerHTML = icons.cloud;
+            } else if (code >= 51 && code <= 67) {
+                descEl.innerText = "下雨";
+                iconEl.innerHTML = icons.rain;
+            } else if (code >= 71 && code <= 77) {
+                descEl.innerText = "下雪";
+                iconEl.innerHTML = icons.cloud;
+            } else if (code >= 95) {
+                descEl.innerText = "雷陣雨";
+                iconEl.innerHTML = icons.thunder;
+            } else {
+                descEl.innerText = "未知";
+                iconEl.innerHTML = icons.cloud;
+            }
+        }
+
+        // --- 3. 本機媒體輪播邏輯 (圖片/影片自動切換) ---
+        // 請將您的檔案放在與此 html 同一個資料夾 (或子資料夾) 中
+        const playlist = [
+            // 目前設定為：只顯示一張固定的圖片 (您也可以自行換成本機路徑，例如 './photo.jpg')
+            { type: 'image', src: 'https://images.unsplash.com/photo-1578637387939-ce388a117c47?q=80&w=1920&auto=format&fit=crop' }
+        ];
+
+        let currentMediaIndex = 0;
+        const mediaContainer = document.getElementById('media-container');
+
+        function playMedia(index) {
+            if (playlist.length === 0) return;
+            
+            const media = playlist[index];
+            mediaContainer.innerHTML = ''; // 清空前一個媒體
+
+            if (media.type === 'image') {
+                const img = document.createElement('img');
+                img.src = media.src;
+                // 加入淡入動畫效果
+                img.className = 'w-full h-full object-cover transition-opacity duration-1000 opacity-0';
+                img.onload = () => img.classList.remove('opacity-0');
+                if (playlist.length > 1) img.onerror = playNext; // 如果找不到圖片就跳下一張
+                
+                mediaContainer.appendChild(img);
+                
+                // 判斷：如果清單中有多個媒體，才設定計時器準備切換；只有一個就固定顯示
+                if (playlist.length > 1) {
+                    setTimeout(playNext, media.duration || 5000);
+                }
+
+            } else if (media.type === 'video') {
+                const video = document.createElement('video');
+                video.src = media.src;
+                video.className = 'w-full h-full object-cover transition-opacity duration-1000 opacity-0';
+                video.autoplay = true;
+                video.muted = true; // 確保自動播放成功
+                
+                video.onloadeddata = () => video.classList.remove('opacity-0');
+                
+                // 判斷：如果是多個檔案就播完換下一個，如果只有一支影片就讓它自己不斷循環
+                if (playlist.length > 1) {
+                    video.onended = playNext;
+                    video.onerror = playNext; 
+                } else {
+                    video.loop = true;
+                }
+                
+                mediaContainer.appendChild(video);
+            }
+        }
+
+        function playNext() {
+            currentMediaIndex = (currentMediaIndex + 1) % playlist.length;
+            playMedia(currentMediaIndex);
+        }
+
+        // --- 4. 初始化執行 ---
+        updateClock();
+        setInterval(updateClock, 1000); // 每秒更新時間
+        
+        fetchWeather();
+        setInterval(fetchWeather, 1800000); // 每 30 分鐘更新一次天氣
+        
+        // 啟動輪播
+        playMedia(currentMediaIndex);
+    </script>
+</body>
+</html>
