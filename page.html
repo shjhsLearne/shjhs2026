@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告頁面</title>
+    <style>
+        /* 1. 基本設定：讓頁面填滿、置中 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 2. 中間的公告區域 - **尺寸已修改** */
+        .announcement-box {
+            width: 900px;  /* **修改：300 -> 900** */
+            height: 600px; /* **修改：300 -> 600** */
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 0;
+            box-sizing: border-box; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
+        /* 3. 公告標題區域 - **結構已修改** */
+        .announcement-header {
+            text-align: center;
+            padding: 20px 20px; /* 稍微加大一點 padding */
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+        
+        /* 4. 公告標題 - **H2 新增樣式** */
+        .announcement-header h2 {
+            font-size: 40pt; /* **修改：使用 20pt** */
+            font-weight: bold;
+            margin: 0; /* 移除 h2 預設的 margin */
+        }
+        
+        /* 5. 公告副標題 - **新增樣式** */
+        .announcement-header .subtitle {
+            font-size: 18pt; /* **修改：新增 10pt 的副標題** */
+            font-weight: normal;
+            margin: 5px 0 0 0; /* 離主標題一點點間距 */
+            color: #555;
+        }
+
+        /* 6. 公告內容上區域 (原 4) */
+        .announcement-content-top {
+            flex-grow: 1;
+            padding: 20px 25px; /* 稍微加大 padding */
+            border-bottom: 1px solid #e0e0e0;
+            overflow-y: auto;
+            font-size: 1.1em; /* 配合大框架，字也放大一點 */
+        }
+
+        /* 7. 公告內容下區域 (原 5) */
+        .announcement-content-bottom {
+            flex-grow: 1;
+            padding: 20px 25px;
+            overflow-y: auto;
+            font-size: 1.1em;
+        }
+        
+        /* 8. 中下方的按鈕容器 (原 6) */
+        .button-container {
+            margin-top: 24px; 
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* 9. 核取方塊的容器 (原 7) */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        /* 10. 核取方塊的標籤樣式 (原 8) */
+        .checkbox-wrapper label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+        
+        /* 11. 核取方塊本身的樣式 (原 9) */
+        #readCheckbox {
+            cursor: pointer;
+        }
+
+        /* 12. 主要的繼續按鈕 (原 10) */
+        #proceedButton {
+            font-size: 16px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        /* 13. 按鈕被禁用時 (disabled) 的樣式 (原 11) */
+        #proceedButton:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* 14. 按鈕啟用時的樣式 (原 12) */
+        #proceedButton:not(:disabled) {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 15. 按鈕啟用時，滑鼠移上去的樣式 (原 13) */
+        #proceedButton:not(:disabled):hover {
+            background-color: #0056b3;
+        }
+        
+        /* 16. 倒數計時的文字樣式 (原 14) */
+        #countdown {
+            display: block;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="announcement-box">
+        <div class="announcement-header">
+            <h2>重要公告</h2>
+            <p class="subtitle">數位教學平台改版公告，點名模組修正，點選『登記出缺席』即完成點名。
+
+</p>
+        </div>
+        <div class="announcement-content-top">
+            <p><strong>七年級公告：</strong> 為了您的學習權益，請務必詳細閱讀此處的說明。</p>
+            <p>下週11/17~11/21，將舉行資訊科-期中線上考，請在考試當日當節課攜帶課本，以便考試，勿遲到。
+
+</p>
+        </div>
+        <div class="announcement-content-bottom">
+            <p><strong>九年級公告：</strong> 為了您的學習權益，請務必詳細閱讀此處的說明。</p>
+            <p>下週11/17~11/21，將舉行Bebras運算思維，請在當日當節課攜帶一隻筆及空白紙張，以便測驗，勿遲到。
+
+</p>
+        </div>
+    </div>
+
+    <div class="button-container">
+        
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="readCheckbox">
+            <label for="readCheckbox">我知道了!我已詳細的閱讀</label>
+        </div>
+
+        <button id="proceedButton" disabled>
+            繼續前往數位教學平台
+        </button>
+        
+        <span id="countdown"></span>
+    </div>
+
+    <script>
+        window.onload = function() {
+            
+            // 1. 抓取所有需要的元素
+            const button = document.getElementById('proceedButton');
+            const countdownDisplay = document.getElementById('countdown');
+            const checkbox = document.getElementById('readCheckbox');
+            const targetUrl = 'http://10.231.3.4'; 
+            
+            // 2. 設定狀態變數
+            let secondsLeft = 10; 
+            let timerElapsed = false; // 追蹤倒數是否已結束
+            let checkboxChecked = false; // 追蹤勾選框是否已勾選
+
+            // 3. 檢查並更新按鈕狀態的函式
+            function updateButtonState() {
+                if (timerElapsed && checkboxChecked) {
+                    button.disabled = false;
+                    countdownDisplay.textContent = '現在可以點選按鈕繼續';
+                } 
+                else if (timerElapsed && !checkboxChecked) {
+                    button.disabled = true;
+                    countdownDisplay.textContent = '請勾選 "我知道了!我已詳細的閱讀"';
+                }
+                else {
+                    button.disabled = true;
+                    countdownDisplay.textContent = `請等待 ${secondsLeft} 秒後再繼續...`;
+                }
+            }
+
+            // 4. 啟動倒數計時器
+            countdownDisplay.textContent = `請等待 ${secondsLeft} 秒後再繼續...`;
+            const timer = setInterval(function() {
+                secondsLeft--;
+
+                if (secondsLeft > 0) {
+                    countdownDisplay.textContent = `請等待 ${secondsLeft} 秒後再繼續...`;
+                } 
+                else {
+                    clearInterval(timer);
+                    timerElapsed = true;
+                    updateButtonState();
+                }
+            }, 1000);
+
+            // 5. 幫「核取方塊」加上點擊監聽
+            checkbox.addEventListener('change', function() {
+                checkboxChecked = this.checked; 
+                updateButtonState();
+            });
+
+            // 6. 幫「按鈕」加上點擊事件
+            button.addEventListener('click', function() {
+                if (!this.disabled) {
+                    window.location.href = targetUrl; 
+                }
+            });
+        };
+    </script>
+
+</body>
+</html>
