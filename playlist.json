@@ -1,3 +1,6 @@
 [
-  { "type": "video", "src": "./videos/school-ad.mp4" }
+  {
+    "type": "video",
+    "src": "./videos/school-ad.mp4"
+  }
 ]
